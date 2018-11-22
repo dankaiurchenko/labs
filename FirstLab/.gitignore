@@ -94,7 +94,7 @@ fabric.properties
 
 *.txt
 
-
+# Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
