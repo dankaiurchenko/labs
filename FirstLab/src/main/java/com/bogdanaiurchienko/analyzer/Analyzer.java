@@ -2,7 +2,8 @@ package com.bogdanaiurchienko.analyzer;
 
 import com.bogdanaiurchienko.fillers.Filler;
 import com.bogdanaiurchienko.output.Printer;
-import com.bogdanaiurchienko.sorters.Sorter;
+import com.bogdanaiurchienko.sorters.AbstractSorter;
+import com.bogdanaiurchienko.sorters.SorterAnnotation;
 import com.sun.javafx.collections.ObservableSetWrapper;
 import org.reflections.Reflections;
 
@@ -24,19 +25,26 @@ public class Analyzer {
     fillerMethods = getFillerMethodsWithAnnotation(fillerClass, fillerType);
   }
 
-  public void analyzeAllSorters(String pack){
-    ObservableSetWrapper<Class<? extends Sorter>> sorterClasses = getAllSorters(pack);
+  private HashMap<String, HashMap<Integer, Long>> analyzeAllSorters(int[][] allArrays, ObservableSetWrapper<Class<? extends AbstractSorter>> sorterClasses){
+    HashMap<String, HashMap<Integer, Long>> allSortersSortTimeMS = new HashMap<>();
     for(Class sorterClass: sorterClasses){
       try {
-        Sorter sorter = (Sorter) sorterClass.newInstance();
-        Printer.print(sorterClass.getName(), arrayLength, analyzeAllArrayTypes(sorter));
+        AbstractSorter sorter = (AbstractSorter) sorterClass.newInstance();
+        String sorterName;
+        if (sorterClass.getAnnotation(SorterAnnotation.class) != null){
+          SorterAnnotation annotation = (SorterAnnotation) sorterClass.getAnnotation(SorterAnnotation.class);
+          sorterName = annotation.value();
+        }
+        else sorterName = sorterClass.getName();
+        allSortersSortTimeMS.put(sorterName, analyzeAllArrayLength(sorter, allArrays));
       } catch (InstantiationException | IllegalAccessException e) {
         e.printStackTrace();
       }
     }
+    return allSortersSortTimeMS;
   }
 
-  private HashMap<Integer, Long> analyzeAllArrayLength(Sorter sorter, int[][] allArrays) {
+  private HashMap<Integer, Long> analyzeAllArrayLength(AbstractSorter sorter, int[][] allArrays) {
     HashMap<Integer, Long> allArrayLengthSortTimeMS = new HashMap<>();
     for (int j = 0; j < allArrays.length; j++) {
       allArrayLengthSortTimeMS.put(arrayLength[j], analyzeSort(sorter, Arrays.copyOf(allArrays[j], arrayLength[j])));
@@ -44,13 +52,12 @@ public class Analyzer {
     return allArrayLengthSortTimeMS;
   }
 
-  private HashMap<String, HashMap<Integer, Long>> analyzeAllArrayTypes(Sorter sorter) {
-    HashMap<String, HashMap<Integer, Long>> allArrayTypesSortTimeMS = new HashMap<>();
+  public void analyzeAllArrayTypes(String pack) {
+    ObservableSetWrapper<Class<? extends AbstractSorter>> sorterClasses = getAllSorters(pack);
     for(Method method: fillerMethods){
       int[][] arrays = initArrays(method);
-      allArrayTypesSortTimeMS.put(method.getName(), analyzeAllArrayLength(sorter, arrays));
+      Printer.print(method.getName(), arrayLength, analyzeAllSorters(arrays, sorterClasses));
     }
-    return allArrayTypesSortTimeMS;
   }
 
   private int[][] initArrays(Method method) {
@@ -65,7 +72,7 @@ public class Analyzer {
     return arrays;
   }
 
-  private long analyzeSort(Sorter sorter, int[] arrayToSort) {
+  private long analyzeSort(AbstractSorter sorter, int[] arrayToSort) {
     long before = System.currentTimeMillis();
     sorter.sort(arrayToSort);
     long after = System.currentTimeMillis();
@@ -113,11 +120,11 @@ public class Analyzer {
     return methodsWithAnnotation;
   }
 
-  private static ObservableSetWrapper<Class<? extends Sorter>> getAllSorters(String pack){
+  private static ObservableSetWrapper<Class<? extends AbstractSorter>> getAllSorters(String pack){
     Reflections reflections = new Reflections(pack);
-    Set<Class<? extends Sorter>> sorters = new HashSet<>();
-    Set<Class<? extends Sorter>> classes = reflections.getSubTypesOf(Sorter.class);
-    for (Class<? extends Sorter> sorterClass: classes){
+    Set<Class<? extends AbstractSorter>> sorters = new HashSet<>();
+    Set<Class<? extends AbstractSorter>> classes = reflections.getSubTypesOf(AbstractSorter.class);
+    for (Class<? extends AbstractSorter> sorterClass: classes){
       if(!Modifier.isAbstract(sorterClass.getModifiers())){
         sorters.add(sorterClass);
       }

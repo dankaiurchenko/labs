@@ -1,10 +1,12 @@
 package com.bogdanaiurchienko.sorters.MergeSorters;
 
 import com.bogdanaiurchienko.sorters.MergeSorter;
+import com.bogdanaiurchienko.sorters.SorterAnnotation;
 import com.bogdanaiurchienko.sorters.SystemSorter;
 
 import java.util.Arrays;
 
+@SorterAnnotation("Merge system sort")
 public class MergeSystemSorter extends MergeSorter {
 
   protected void sortPart(int[] arrayToSort, int low, int high){

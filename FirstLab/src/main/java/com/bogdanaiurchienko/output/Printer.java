@@ -8,13 +8,13 @@ import java.util.Iterator;
 
 public class Printer {
 
-  public static void print(String sorterName, int[] arrayLength, HashMap<String, HashMap<Integer, Long>> allArrayTypesSortTime) {
-    try(Formatter formatter = new Formatter(new FileOutputStream(sorterName+".txt"))) {
-      formatter.format("%-35s", "ArrayType");
+  public static void print(String arrayType, int[] arrayLength, HashMap<String, HashMap<Integer, Long>> allArrayTypesSortTime) {
+    try(Formatter formatter = new Formatter(new FileOutputStream(arrayType+".txt"))) {
+      formatter.format("%-35s", "Sorter");
       for (int anArrayLength : arrayLength) {
         formatter.format("%10s", anArrayLength);
       }
-      formatter.format("    With sorter = %s \n", sorterName);
+      formatter.format("    With arrayType = %s \n", arrayType);
       Iterator<java.util.Map.Entry<String, HashMap<Integer, Long>>> typesIterator = allArrayTypesSortTime.entrySet().iterator();
       while (typesIterator.hasNext()) {
         java.util.Map.Entry<String, HashMap<Integer, Long>> pair = typesIterator.next();

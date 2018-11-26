@@ -1,7 +1,7 @@
 package com.bogdanaiurchienko.sorters;
 
 
-public abstract class MergeSorter extends Sorter {
+public abstract class MergeSorter extends AbstractSorter {
 
   protected int[] sortArray(int[] arrayToSort){
     this.mergeSort(arrayToSort, arrayToSort.length - 1);

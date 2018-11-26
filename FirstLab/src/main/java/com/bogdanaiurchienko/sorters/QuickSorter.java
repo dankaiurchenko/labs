@@ -1,6 +1,8 @@
 package com.bogdanaiurchienko.sorters;
 
-public class QuickSorter extends Sorter {
+
+@SorterAnnotation("Quick sort")
+public class QuickSorter extends AbstractSorter {
 
   int[] sortArray(int[] arrayToSort){
     this.quickSort(arrayToSort, 0, arrayToSort.length - 1);

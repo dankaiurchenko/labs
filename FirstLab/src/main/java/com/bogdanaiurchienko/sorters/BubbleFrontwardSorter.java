@@ -1,7 +1,7 @@
 package com.bogdanaiurchienko.sorters;
 
-
-public class BubbleSorterFromBeginning extends Sorter {
+@SorterAnnotation("Bubble frontward sort")
+public class BubbleFrontwardSorter extends AbstractSorter {
 
   int [] sortArray(int [] arrayToSort){
     for (int i = 0; i < arrayToSort.length -1; i++) {

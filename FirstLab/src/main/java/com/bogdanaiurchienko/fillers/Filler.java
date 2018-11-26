@@ -6,7 +6,7 @@ import java.util.Random;
 public class Filler {
   private static Random randomNum = new Random();
 
-  @FillerMethod
+  @FillerMethod("Random array")
   static public int[] getRandomArray(int length, int max){
     int[] array = new int[length];
     for (int i = 0; i < length; i++){
@@ -16,7 +16,7 @@ public class Filler {
   }
 
 
-  @FillerMethod
+  @FillerMethod("Sorted array")
   static public int[] getSortedArray(int length, int max) {
     int[] array = new int[length];
     int step = max / length;
@@ -27,7 +27,7 @@ public class Filler {
   }
 
 
-  @FillerMethod
+  @FillerMethod("Sorted array with random end")
   static public int[] getSortedArrayWithRandomEnd(int lenght, int max){
     int[] array = new int[lenght];
     int[] sortedPart = Filler.getSortedArray(lenght-1, max);
@@ -37,7 +37,7 @@ public class Filler {
   }
 
 
-  @FillerMethod
+  @FillerMethod("Reverse sorted array")
   static public int[] getReverseSortedArray(int length, int max){
     int[] array = new int[length];
     int step = max / length;

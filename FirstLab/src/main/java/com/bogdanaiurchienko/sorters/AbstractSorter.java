@@ -2,9 +2,9 @@ package com.bogdanaiurchienko.sorters;
 
 
 @SuppressWarnings("WeakerAccess")
-abstract public class Sorter {
+abstract public class AbstractSorter {
 
-  public Sorter(){
+  public AbstractSorter(){
 
   }
 
