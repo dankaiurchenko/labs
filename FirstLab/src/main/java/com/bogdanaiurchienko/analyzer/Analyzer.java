@@ -1,17 +1,19 @@
 package com.bogdanaiurchienko.analyzer;
 
 import com.bogdanaiurchienko.fillers.Filler;
+import com.bogdanaiurchienko.fillers.FillerMethod;
 import com.bogdanaiurchienko.output.Printer;
 import com.bogdanaiurchienko.sorters.AbstractSorter;
 import com.bogdanaiurchienko.sorters.SorterAnnotation;
-import com.sun.javafx.collections.ObservableSetWrapper;
 import org.reflections.Reflections;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.*;
 
 public class Analyzer {
@@ -21,21 +23,27 @@ public class Analyzer {
 
   public Analyzer(int[] arrayLength, Class<? extends Annotation> fillerType) {
     this.arrayLength = arrayLength;
-    Class fillerClass = Filler.class;
+    Class<Filler> fillerClass = Filler.class;
     fillerMethods = getFillerMethodsWithAnnotation(fillerClass, fillerType);
   }
 
-  private HashMap<String, HashMap<Integer, Long>> analyzeAllSorters(int[][] allArrays, ObservableSetWrapper<Class<? extends AbstractSorter>> sorterClasses){
-    HashMap<String, HashMap<Integer, Long>> allSortersSortTimeMS = new HashMap<>();
-    for(Class sorterClass: sorterClasses){
+  public void analyzeAllArrayTypes(String pack) {
+    //LinkedList<Class<? extends AbstractSorter>> sorterClasses = getAllSortersUsingReflections(pack);
+    LinkedList<Class<? extends AbstractSorter>> sorterClasses = getSorters(Thread.currentThread().getContextClassLoader(),pack);
+    for(Method method: fillerMethods){
+      int[][] arrays = initArrays(method);
+      String methodName =  method.getAnnotation(FillerMethod.class).value();
+      Printer.print(methodName, arrayLength, analyzeAllSorters(arrays, sorterClasses));
+    }
+  }
+
+  private HashMap<String, HashMap<Integer, Long>> analyzeAllSorters(int[][] allArrays, LinkedList<Class<? extends AbstractSorter>> sorterClasses){
+    LinkedHashMap<String, HashMap<Integer, Long>> allSortersSortTimeMS = new LinkedHashMap<>();
+    for(Class<? extends AbstractSorter> sorterClass: sorterClasses){
       try {
-        AbstractSorter sorter = (AbstractSorter) sorterClass.newInstance();
-        String sorterName;
-        if (sorterClass.getAnnotation(SorterAnnotation.class) != null){
-          SorterAnnotation annotation = (SorterAnnotation) sorterClass.getAnnotation(SorterAnnotation.class);
-          sorterName = annotation.value();
-        }
-        else sorterName = sorterClass.getName();
+        AbstractSorter sorter = sorterClass.newInstance();
+        String sorterName = (sorterClass.getAnnotation(SorterAnnotation.class) != null) ?
+                sorterClass.getAnnotation(SorterAnnotation.class).value() : sorterClass.getSimpleName();
         allSortersSortTimeMS.put(sorterName, analyzeAllArrayLength(sorter, allArrays));
       } catch (InstantiationException | IllegalAccessException e) {
         e.printStackTrace();
@@ -50,14 +58,6 @@ public class Analyzer {
       allArrayLengthSortTimeMS.put(arrayLength[j], analyzeSort(sorter, Arrays.copyOf(allArrays[j], arrayLength[j])));
     }
     return allArrayLengthSortTimeMS;
-  }
-
-  public void analyzeAllArrayTypes(String pack) {
-    ObservableSetWrapper<Class<? extends AbstractSorter>> sorterClasses = getAllSorters(pack);
-    for(Method method: fillerMethods){
-      int[][] arrays = initArrays(method);
-      Printer.print(method.getName(), arrayLength, analyzeAllSorters(arrays, sorterClasses));
-    }
   }
 
   private int[][] initArrays(Method method) {
@@ -79,7 +79,7 @@ public class Analyzer {
     return after - before;
   }
 
-  private static int[] toPrimitive(Integer[] IntegerArray) {
+  private int[] toPrimitive(Integer[] IntegerArray) {
 
     int[] result = new int[IntegerArray.length];
     for (int i = 0; i < IntegerArray.length; i++) {
@@ -88,7 +88,7 @@ public class Analyzer {
     return result;
   }
 
-  private static Integer[] toInteger(Object[] array) {
+  private Integer[] toInteger(Object[] array) {
     Integer[] integerArray = new Integer[array.length];
     int i = 0;
     for (Object a : array) {
@@ -97,38 +97,91 @@ public class Analyzer {
     return integerArray;
   }
 
-  private static Object[] unpack(Object array) {
+  private Object[] unpack(Object array) {
     Object[] array2 = new Object[Array.getLength(array)];
     for (int i = 0; i < array2.length; i++)
       array2[i] = Array.get(array, i);
     return toInteger(array2);
   }
 
-  @SuppressWarnings("Convert2Lambda")
-  private static LinkedList<Method> getFillerMethodsWithAnnotation(Class fillerClass, Class<? extends Annotation> fillerType) {
+  private LinkedList<Method> getFillerMethodsWithAnnotation(Class<Filler> fillerClass, Class<? extends Annotation> fillerType) {
     LinkedList<Method> methodsWithAnnotation = new LinkedList<>();
     for (Method method : fillerClass.getDeclaredMethods())
       if (method.isAnnotationPresent(fillerType)) {
         methodsWithAnnotation.add(method);
       }
-    methodsWithAnnotation.sort(new Comparator<Method>(){
-      @Override
-      public int compare(Method o1, Method o2){
-        return o1.getName().compareTo(o2.getName());
-      }
-    });
     return methodsWithAnnotation;
   }
 
-  private static ObservableSetWrapper<Class<? extends AbstractSorter>> getAllSorters(String pack){
+  @SuppressWarnings({"Convert2Lambda", "unused"})
+  private LinkedList<Class<? extends AbstractSorter>> getAllSortersUsingReflections(String pack){
     Reflections reflections = new Reflections(pack);
-    Set<Class<? extends AbstractSorter>> sorters = new HashSet<>();
     Set<Class<? extends AbstractSorter>> classes = reflections.getSubTypesOf(AbstractSorter.class);
+    LinkedList<Class<? extends AbstractSorter>> sorters = new LinkedList<>();
     for (Class<? extends AbstractSorter> sorterClass: classes){
       if(!Modifier.isAbstract(sorterClass.getModifiers())){
         sorters.add(sorterClass);
       }
     }
-    return new ObservableSetWrapper<>(sorters);
+    sorters.sort(new Comparator<Class<? extends AbstractSorter>>() {
+      @Override
+      public int compare(Class<? extends AbstractSorter> o1, Class<? extends AbstractSorter> o2) {
+        return o1.getSimpleName().compareTo(o2.getSimpleName());
+      }
+    });
+    return sorters;
+  }
+
+  private LinkedList<Class<? extends AbstractSorter>> getSorters(ClassLoader loader, String pack){
+    List<Class> classes = new ArrayList<>();
+    getClassesInPackage(loader, pack, classes);
+    return filterSorters(classes);
+  }
+
+  private void getClassesInPackage(ClassLoader loader, String pack, List<Class> classes){
+    URL uPackage = loader.getResource(pack.replace('.', '/'));
+    if (uPackage != null) {
+      File[] files = new File(uPackage.getPath()).listFiles();
+      if(files != null){
+        for(File f: files){
+          if(f.isDirectory()){
+            getClassesInPackage(loader, pack+"."+f.getName(), classes);
+          }
+          if(f.getName().endsWith(".class")) {
+            try {
+              classes.add(Class.forName(pack+"."+f.getName().substring(0,f.getName().lastIndexOf('.'))));
+            } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @SuppressWarnings({"Convert2Lambda", "unchecked"})
+  private LinkedList<Class<? extends AbstractSorter>> filterSorters(List<Class> classes){
+    LinkedList<Class<? extends AbstractSorter>> sorters = new LinkedList<>();
+    for (Class<?> clazz: classes){
+      if(isSorterClass(clazz) && (!Modifier.isAbstract(clazz.getModifiers()))){
+        sorters.add((Class<? extends AbstractSorter>) clazz);
+      }
+    }
+    sorters.sort(new Comparator<Class<? extends AbstractSorter>>() {
+      @Override
+      public int compare(Class<? extends AbstractSorter> o1, Class<? extends AbstractSorter> o2) {
+        return o1.getSimpleName().compareTo(o2.getSimpleName());
+      }
+    });
+    return sorters;
+  }
+
+  private boolean isSorterClass(Class clazz){
+    if(clazz.isAnnotation()) return false;
+    if(clazz.getSuperclass() == Object.class)
+      return false;
+    else if(clazz.getSuperclass() == AbstractSorter.class)
+      return true;
+    else return isSorterClass(clazz.getSuperclass());
   }
 }

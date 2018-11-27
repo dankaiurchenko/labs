@@ -1,13 +1,13 @@
 package com.bogdanaiurchienko.sorters.MergeSorters;
 
 import com.bogdanaiurchienko.sorters.BubbleFrontwardSorter;
-import com.bogdanaiurchienko.sorters.MergeSorter;
+import com.bogdanaiurchienko.sorters.AbstractMergeSorter;
 import com.bogdanaiurchienko.sorters.SorterAnnotation;
 
 import java.util.Arrays;
 
 @SorterAnnotation("Merge bubble frontward sort")
-public class MergeFrontwardBubbleSorter extends MergeSorter {
+public class MergeFrontwardBubbleSorter extends AbstractMergeSorter {
 
   protected void sortPart(int[] arrayToSort, int low, int high){
     BubbleFrontwardSorter sorter = new BubbleFrontwardSorter();
