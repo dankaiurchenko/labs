@@ -1,6 +1,9 @@
 package com.bogdanaiurchienko.sorters;
 
-
+/**
+ * Parent class to all classes that can be analyzed by utility.
+ * @author Bogdana Iurchienko
+ */
 @SuppressWarnings("WeakerAccess")
 abstract public class AbstractSorter {
 
@@ -8,17 +11,21 @@ abstract public class AbstractSorter {
 
   }
 
-  public int[] sort(int[] arrayToSort){
-    if (arrayToSort.length == 0){
-      return new int[]{};
-    }
 
-    else
-      return sortArray(arrayToSort);
-  }
+  /**
+   * Abstract method that is being called by Analyzer.
+   * @see com.bogdanaiurchienko.analyzer.Analyzer#analyzeSort(AbstractSorter, int[])
+   * @param arrayToSort array of int to be sorted
+   * @return sorted array
+   */
+  public abstract int[] sort(int[] arrayToSort);
 
-  abstract int[] sortArray(int[] arrayToSort);
-
+  /**
+   * Swaps two elements in <b>array<b/> with indexes <b>firstElement</b> and <b>secondElement</b>
+   * @param array array where two elements are to bew swapped
+   * @param firstElement first element
+   * @param secondElement second element
+   */
   void swap(int[] array, int firstElement, int secondElement){
     int temp = array[firstElement];
     array[firstElement] = array[secondElement];

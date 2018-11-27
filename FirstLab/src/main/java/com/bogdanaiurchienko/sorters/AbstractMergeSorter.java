@@ -1,13 +1,23 @@
 package com.bogdanaiurchienko.sorters;
 
-
+/**
+ * Parent class to all merge sorters with method of half partition that can be analyzed by utility.
+ * @author Bogdana Iurchienko
+ */
 public abstract class AbstractMergeSorter extends AbstractSorter {
 
-  protected int[] sortArray(int[] arrayToSort){
+  public int[] sort(int[] arrayToSort){
     this.mergeSort(arrayToSort, arrayToSort.length - 1);
     return arrayToSort;
   }
 
+  /**
+   * Divides <b>arrayToSort</b> into 2 halves, sorts each half with another sorter. <br>
+   *   Then merges two parts into one array.
+   * @see AbstractMergeSorter#sortPart(int[], int, int)
+   * @param arrayToSort array to sort
+   * @param high index of the last element to sort
+   */
   private void mergeSort(int[] arrayToSort, int high) {
     int mid = (high) / 2;
     sortPart(arrayToSort, 0, mid);
@@ -33,6 +43,12 @@ public abstract class AbstractMergeSorter extends AbstractSorter {
 
   }
 
+  /**
+   * Sorts the part (elements with indexes from low to high) of the arrayToSort.
+   * @param arrayToSort array to sort
+   * @param low the beginning of the part to sort
+   * @param high the end of the part to sort
+   */
   abstract protected void sortPart(int[] arrayToSort, int low, int high);
 
 }
