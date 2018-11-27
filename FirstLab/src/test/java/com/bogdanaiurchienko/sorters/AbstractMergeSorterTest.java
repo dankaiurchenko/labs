@@ -9,8 +9,4 @@ class AbstractMergeSorterTest {
   @Test
   void sort() {
   }
-
-  @Test
-  void sortPart() {
-  }
 }

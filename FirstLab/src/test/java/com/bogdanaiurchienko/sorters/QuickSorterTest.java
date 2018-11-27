@@ -10,7 +10,4 @@ class QuickSorterTest {
   void sort() {
   }
 
-  @Test
-  void quickSort() {
-  }
 }

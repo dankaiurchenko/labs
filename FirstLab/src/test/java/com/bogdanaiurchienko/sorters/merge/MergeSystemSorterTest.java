@@ -7,6 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MergeSystemSorterTest {
 
   @Test
-  void sortPart() {
+  void sort() {
   }
 }

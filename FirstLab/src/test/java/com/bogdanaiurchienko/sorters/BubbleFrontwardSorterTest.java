@@ -11,11 +11,4 @@ class BubbleFrontwardSorterTest {
 
   }
 
-  @Test
-  void name() {
-  }
-
-  @Test
-  void sort1() {
-  }
 }

@@ -1,6 +1,5 @@
 package com.bogdanaiurchienko.fillers;
 
-import java.util.Arrays;
 import java.util.Random;
 /**
  * @author Bogdana Iurchienko
@@ -21,7 +20,6 @@ public class Filler {
     for (int i = 0; i < length; i++){
       array[i] = randomNum.nextInt(max);
     }
-    System.out.println("1" + Arrays.toString(array));
     return array;
   }
 
@@ -39,7 +37,6 @@ public class Filler {
     for (int i = 0; i < length; i++) {
       array[i] = step * i;
     }
-    System.out.println("2" + Arrays.toString(array));
     return array;
   }
 
@@ -57,7 +54,6 @@ public class Filler {
     int[] sortedPart = Filler.getSortedArray(length-1, max);
     System.arraycopy(sortedPart, 0, array, 0, length - 1);
     array[length - 1] =  max / 2;
-    System.out.println("3" + Arrays.toString(array));
     return array;
   }
 
@@ -75,7 +71,6 @@ public class Filler {
     for (int i = 0; i < length; i++) {
       array[i] = step * (length - i);
     }
-    System.out.println("4" + Arrays.toString(array));
     return array;
   }
 }

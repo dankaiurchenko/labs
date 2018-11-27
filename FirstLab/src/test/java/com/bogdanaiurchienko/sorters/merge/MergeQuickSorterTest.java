@@ -7,6 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MergeQuickSorterTest {
 
   @Test
-  void sortPart() {
+  void sort() {
   }
 }

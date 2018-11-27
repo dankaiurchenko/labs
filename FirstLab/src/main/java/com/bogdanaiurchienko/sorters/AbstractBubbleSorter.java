@@ -4,5 +4,5 @@ package com.bogdanaiurchienko.sorters;
  * @author Bogdana Iurchienko
  */
 @SuppressWarnings("WeakerAccess")
-abstract public class AbstractBubbleSorter extends AbstractSorter {
+public abstract class AbstractBubbleSorter extends AbstractSorter {
 }
