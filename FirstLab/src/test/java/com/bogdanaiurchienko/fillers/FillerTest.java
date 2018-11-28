@@ -13,7 +13,7 @@ public class FillerTest {
 
   @Test(timeout = 100)
   public void getRandomArray2() {
-    Assert.assertFalse(isArraySorted(Filler.getRandomArray(4, 3)));
+    Assert.assertFalse(isArraySorted(Filler.getRandomArray(4, 5)));
   }
 
   @Test(timeout = 100, expected = Exception.class)

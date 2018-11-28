@@ -6,9 +6,7 @@ import com.bogdanaiurchienko.sorters.AbstractSorter;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -21,6 +19,7 @@ import java.util.Map.Entry;
   * {@link com.bogdanaiurchienko.analyzer.ClassScanner}</p>
  * @author Bogdana Iurchienko
  */
+@SuppressWarnings("WeakerAccess")
 public class Analyzer {
 
   private final int[] arrayLength;
@@ -32,7 +31,20 @@ public class Analyzer {
    * @param arrayLength int array that contains number of elements in each array to sort
    */
   public Analyzer(int[] arrayLength) {
-    this.arrayLength = arrayLength;
+    List<Integer> list = new ArrayList<>();
+    for (int n : arrayLength) {
+      if (n > 1) {
+        list.add(n);
+      }
+    }
+    this.arrayLength = new int[list.size()];
+    for(int i=0; i < list.size(); i++){
+      this.arrayLength[i] = list.get(i);
+    }
+  }
+
+  int[] getArrayLength() {
+    return arrayLength;
   }
 
   /**
@@ -47,7 +59,7 @@ public class Analyzer {
    *
    * @param pack String name of package, where sorter classes are to be found
    */
-  public void analyzeAllArrayTypes(String pack) {
+  public void analyzeAllArrayTypes(String pack) throws AnalyzerException {
     LinkedHashMap<String, AbstractSorter> sorters = classScanner.initSorters(pack);
     for(Entry<String, Method> method: classScanner.getFillerMethodsWithAnnotation()){
       int[][] arrays = arrayInitializer.initArrays(method.getValue());
@@ -119,13 +131,13 @@ public class Analyzer {
       * @param method filler method from {@link com.bogdanaiurchienko.fillers.Filler}
       * @return 2-dimensional array of int with arrays of each size
       */
-    private int[][] initArrays(Method method) {
+    private int[][] initArrays(Method method) throws AnalyzerException {
       int[][] arrays = new int[arrayLength.length][];
       for(int i = 0; i < arrayLength.length; i++){
         try {
           arrays[i] = toPrimitive(toInteger(unpack(method.invoke(null, arrayLength[i], arrayLength[i] * 2))));
         } catch (IllegalAccessException | InvocationTargetException e) {
-          e.printStackTrace();
+          throw new AnalyzerException(e);
         }
       }
       return arrays;

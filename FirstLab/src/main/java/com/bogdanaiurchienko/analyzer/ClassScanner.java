@@ -43,7 +43,7 @@ public class ClassScanner {
    * @param pack package, which contains sorters to be analyzed
    * @return Map of sorter objects and their names
    */
-  public LinkedHashMap<String, AbstractSorter> initSorters(String pack){
+  public LinkedHashMap<String, AbstractSorter> initSorters(String pack) throws AnalyzerException {
 //    LinkedList<Class<? extends AbstractSorter>> sorterClasses = getSorters(pack);
     LinkedList<Class<? extends AbstractSorter>> sorterClasses = getAllSortersUsingReflections(pack);
     LinkedHashMap<String, AbstractSorter> sorters = new LinkedHashMap<>();
@@ -53,7 +53,7 @@ public class ClassScanner {
                 sorterClass.getAnnotation(SorterAnnotation.class).value() : sorterClass.getSimpleName();
         sorters.put(sorterName, sorterClass.newInstance());
       } catch (InstantiationException | IllegalAccessException e) {
-        e.printStackTrace();
+        throw new AnalyzerException(e);
       }
     }
     return sorters;
@@ -97,7 +97,7 @@ public class ClassScanner {
    */
   @Deprecated
   @SuppressWarnings("unused")
-  public LinkedList<Class<? extends AbstractSorter>> getSorters(String pack){
+  public LinkedList<Class<? extends AbstractSorter>> getSorters(String pack) throws ClassNotFoundException {
     List<Class> classes = new ArrayList<>();
     getClassesInPackage(Thread.currentThread().getContextClassLoader(), pack, classes);
     return filterSorters(classes);
@@ -113,7 +113,7 @@ public class ClassScanner {
    * @param classes all classes in package and subpackages
    */
   @Deprecated
-  private void getClassesInPackage(ClassLoader loader, String pack, List<Class> classes){
+  private void getClassesInPackage(ClassLoader loader, String pack, List<Class> classes) throws ClassNotFoundException {
     URL uPackage = loader.getResource(pack.replace('.', '/'));
     if (uPackage != null) {
       File[] files = new File(uPackage.getPath()).listFiles();
@@ -123,11 +123,7 @@ public class ClassScanner {
             getClassesInPackage(loader, pack+"."+f.getName(), classes);
           }
           if(f.getName().endsWith(".class")) {
-            try {
-              classes.add(Class.forName(pack+"."+f.getName().substring(0,f.getName().lastIndexOf('.'))));
-            } catch (ClassNotFoundException e) {
-              e.printStackTrace();
-            }
+            classes.add(Class.forName(pack+"."+f.getName().substring(0,f.getName().lastIndexOf('.'))));
           }
         }
       }
