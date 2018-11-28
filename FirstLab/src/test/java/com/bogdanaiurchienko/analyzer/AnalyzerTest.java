@@ -12,7 +12,7 @@ public class AnalyzerTest {
 
   @Test(timeout = 10000)
   public void analyzeAllArrayTypes2() {
-    Assert.assertArrayEquals(new int[]{}, new Analyzer(new int[] {-3, -1, 0, -54, 0}).getArrayLength());
+    Assert.assertEquals(5, new Analyzer(new int[] {-3, -1, 0, -54, 0}).getArrayLength().length);
   }
 
   @Test(timeout = 10000)

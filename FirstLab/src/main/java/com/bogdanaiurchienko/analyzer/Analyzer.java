@@ -3,8 +3,6 @@ package com.bogdanaiurchienko.analyzer;
 import com.bogdanaiurchienko.output.Printer;
 import com.bogdanaiurchienko.sorters.AbstractSorter;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
@@ -31,16 +29,7 @@ public class Analyzer {
    * @param arrayLength int array that contains number of elements in each array to sort
    */
   public Analyzer(int[] arrayLength) {
-    List<Integer> list = new ArrayList<>();
-    for (int n : arrayLength) {
-      if (n > 1) {
-        list.add(n);
-      }
-    }
-    this.arrayLength = new int[list.size()];
-    for(int i=0; i < list.size(); i++){
-      this.arrayLength[i] = list.get(i);
-    }
+    this.arrayLength = arrayLength;
   }
 
   int[] getArrayLength() {
@@ -56,13 +45,13 @@ public class Analyzer {
    * in separate file using {@link com.bogdanaiurchienko.output.Printer}
    * @see ArrayInitializer
    * @see ClassScanner#getFillerMethodsWithAnnotation()
-   *
+   * @throws AnalyzerException in case of problems while analyzing
    * @param pack String name of package, where sorter classes are to be found
    */
   public void analyzeAllArrayTypes(String pack) throws AnalyzerException {
     LinkedHashMap<String, AbstractSorter> sorters = classScanner.initSorters(pack);
     for(Entry<String, Method> method: classScanner.getFillerMethodsWithAnnotation()){
-      int[][] arrays = arrayInitializer.initArrays(method.getValue());
+      int[][] arrays = arrayInitializer.initArrays(method.getValue(), arrayLength);
       Printer.print(method.getKey(), arrayLength, analyzeAllSorters(arrays, sorters));
     }
   }
@@ -116,78 +105,5 @@ public class Analyzer {
     return after - before;
   }
 
-   /**
-    * Class that invokes filler methods found with <b>ClassScanner</b>
-    * in {@link com.bogdanaiurchienko.fillers.Filler}
-    * and converts the result into int[][]
-    * @see ClassScanner#getFillerMethodsWithAnnotation()
-    */
-
-  private class ArrayInitializer{
-
-     /**
-      * Calls <b>method</b> for every value in {@link Analyzer#arrayLength} and adds to return 2-dimensional array.
-      *
-      * @param method filler method from {@link com.bogdanaiurchienko.fillers.Filler}
-      * @return 2-dimensional array of int with arrays of each size
-      */
-    private int[][] initArrays(Method method) throws AnalyzerException {
-      int[][] arrays = new int[arrayLength.length][];
-      for(int i = 0; i < arrayLength.length; i++){
-        try {
-          arrays[i] = toPrimitive(toInteger(unpack(method.invoke(null, arrayLength[i], arrayLength[i] * 2))));
-        } catch (IllegalAccessException | InvocationTargetException e) {
-          throw new AnalyzerException(e);
-        }
-      }
-      return arrays;
-    }
-
-     /**
-      * Converts Integer[] into int[]
-      * @see ArrayInitializer#toInteger(Object[])
-      * @param IntegerArray array of Integer
-      * @return {@link @param IntegerArray} converted into int[]
-      */
-    private int[] toPrimitive(Integer[] IntegerArray) {
-
-      int[] result = new int[IntegerArray.length];
-      for (int i = 0; i < IntegerArray.length; i++) {
-        result[i] = IntegerArray[i];
-      }
-      return result;
-    }
-
-     /**
-      * Converts array of objects into Integer array
-      * @see ArrayInitializer#unpack(Object)
-      * @see ArrayInitializer#toPrimitive(Integer[])
-      * @param array array of Objects to be converted
-      * @return resulting Integer array
-      */
-    private Integer[] toInteger(Object[] array) {
-      Integer[] integerArray = new Integer[array.length];
-      int i = 0;
-      for (Object a : array) {
-        integerArray[i++] = (Integer) a;
-      }
-      return integerArray;
-    }
-
-     /**
-      * Unpacks array of numbers represented as Object returned by reflective filler method invocation
-      * @see ArrayInitializer#initArrays(Method)
-      * @see ArrayInitializer#toInteger(Object[])
-      * @param array array of numbers represented as an instance of Object
-      * @return array of Objects
-      */
-    private Object[] unpack(Object array) {
-      Object[] array2 = new Object[Array.getLength(array)];
-      for (int i = 0; i < array2.length; i++)
-        array2[i] = Array.get(array, i);
-      return toInteger(array2);
-    }
-
-  }
 
 }

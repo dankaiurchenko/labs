@@ -21,12 +21,12 @@ public abstract class AbstractSorter {
   public abstract int[] sort(int[] arrayToSort);
 
   /**
-   * Swaps two elements in <b>array<b/> with indexes <b>firstElement</b> and <b>secondElement</b>
+   * Swaps two elements in <b>array</b> with indexes <b>firstElement</b> and <b>secondElement</b>
    * @param array array where two elements are to bew swapped
    * @param firstElement first element
    * @param secondElement second element
    */
-  void swap(int[] array, int firstElement, int secondElement){
+  protected void swap(int[] array, int firstElement, int secondElement){
     int temp = array[firstElement];
     array[firstElement] = array[secondElement];
     array[secondElement] = temp;

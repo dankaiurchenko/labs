@@ -7,19 +7,38 @@ package com.bogdanaiurchienko.sorters;
 @SorterAnnotation("Bubble frontward sort")
 public class BubbleFrontwardSorter extends AbstractBubbleSorter {
 
-  /**
-   *
-   * @param arrayToSort array of int to be sorted
-   * @return sorted array
-   */
-  public int [] sort(int [] arrayToSort){
-    for (int i = 0; i < arrayToSort.length -1; i++) {
-      for (int j = 0; j < arrayToSort.length - i - 1; j++) {
-        if (arrayToSort[j] > arrayToSort[j + 1]) {
-          swap(arrayToSort, j,j+1);
-        }
-      }
-    }
-    return arrayToSort;
+  @Override
+  protected int getFirstOuterIndex() {
+    return 0;
+  }
+
+  @Override
+  protected int getFirstInnerIndex(int i) {
+    return 0;
+  }
+
+  @Override
+  protected boolean isLastOuterIndex(int i) {
+    return i < arrayToSort.length -1;
+  }
+
+  @Override
+  protected boolean isLastInnerIndex(int i, int j) {
+    return j < arrayToSort.length - i - 1;
+  }
+
+  @Override
+  protected boolean elementsNotInOrder(int j) {
+    return arrayToSort[j] > arrayToSort[j + 1];
+  }
+
+  @Override
+  protected void swapElements(int j) {
+    swap(arrayToSort, j,j+1);
+  }
+
+  @Override
+  protected int getNextIndex(int i) {
+    return i+1;
   }
 }

@@ -41,6 +41,7 @@ public class ClassScanner {
    * Name of sort method is the value of {@link SorterAnnotation},
    * or (if an annotation has not been set) the simple name of the class.
    * @param pack package, which contains sorters to be analyzed
+   * @throws AnalyzerException in case of problems while initializing sorters
    * @return Map of sorter objects and their names
    */
   public LinkedHashMap<String, AbstractSorter> initSorters(String pack) throws AnalyzerException {
@@ -93,10 +94,11 @@ public class ClassScanner {
    * @see ClassScanner#getClassesInPackage(ClassLoader, String, List)
    * @see ClassScanner#getAllSortersUsingReflections(String)
    * @param pack package where child classes of AbstractSorter are to be found
+   * @throws ClassNotFoundException in case of problems
    * @return List of Class objects of all found classes
    */
-  @Deprecated
   @SuppressWarnings("unused")
+  @Deprecated
   public LinkedList<Class<? extends AbstractSorter>> getSorters(String pack) throws ClassNotFoundException {
     List<Class> classes = new ArrayList<>();
     getClassesInPackage(Thread.currentThread().getContextClassLoader(), pack, classes);
@@ -111,6 +113,7 @@ public class ClassScanner {
    * @param loader classLoader of current Thread
    * @param pack package to scan
    * @param classes all classes in package and subpackages
+   * @throws ClassNotFoundException in case of problems
    */
   @Deprecated
   private void getClassesInPackage(ClassLoader loader, String pack, List<Class> classes) throws ClassNotFoundException {
