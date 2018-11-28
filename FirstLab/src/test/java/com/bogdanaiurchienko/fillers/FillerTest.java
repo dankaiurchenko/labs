@@ -7,53 +7,48 @@ import org.junit.Test;
 public class FillerTest {
 
   @Test(timeout = 100)
-  public void getRandomArray() {
-    Assert.assertFalse(isArraySorted(Filler.getRandomArray(4, 6)));
+  public void getRandomArrayIsArrayRandomIsArraySorted() {
+    Assert.assertFalse(isArraySorted(Filler.getRandomArray(50, 50)));
   }
 
   @Test(timeout = 100)
-  public void getRandomArray2() {
-    Assert.assertFalse(isArraySorted(Filler.getRandomArray(4, 5)));
-  }
-
-  @Test(timeout = 100, expected = Exception.class)
-  public void getRandomArray3() {
-    Filler.getRandomArray(4, -3);
+  public void getRandomArrayIsArrayEmpty() {
+    Assert.assertEquals(0, Filler.getRandomArray(50, -50).length);
   }
 
   @Test(timeout = 100)
-  public void getSortedArray() {
-    Assert.assertTrue(isArraySorted(Filler.getSortedArray(7, 8)));
+  public void getSortedArrayIsArrayDemandedLength() {
+    Assert.assertEquals(50, Filler.getSortedArray(50, 8).length);
   }
 
   @Test(timeout = 100)
-  public void getSortedArray2() {
+  public void getSortedArrayIsArraySorted() {
     Assert.assertTrue(isArraySorted(Filler.getSortedArray(20, 8)));
   }
 
-  @Test(timeout = 100, expected = ArithmeticException.class)
-  public void getSortedArray3() {
-    Assert.assertFalse(isArraySorted(Filler.getSortedArray(0, 8)));
+  @Test(timeout = 100)
+  public void getSortedArrayIsArrayEmpty() {
+    Assert.assertEquals(0, Filler.getSortedArray(0, 8).length);
   }
 
   @Test(timeout = 100)
-  public void getSortedArrayWithRandomEnd() {
+  public void getSortedArrayWithRandomEndIsArraySorted() {
     Assert.assertFalse(isArraySorted(Filler.getSortedArrayWithRandomEnd(6, 10)));
   }
 
   @Test(timeout = 100)
-  public void getSortedArrayWithRandomEnd2() {
-    Assert.assertTrue(isArraySorted(Filler.getSortedArrayWithRandomEnd(6, 0)));
+  public void getSortedArrayWithRandomEndIsArrayEmpty() {
+    Assert.assertEquals(0, Filler.getSortedArrayWithRandomEnd(0, 8).length);
   }
 
   @Test(timeout = 100)
-  public void getReverseSortedArray() {
+  public void getReverseSortedArrayIsArraySortedAsc() {
     Assert.assertFalse(isArraySorted(Filler.getReverseSortedArray(4, 6)));
   }
 
   @Test(timeout = 100)
-  public void getReverseSortedArray2() {
-    Assert.assertTrue(isArraySorted(Filler.getReverseSortedArray(4, 0)));
+  public void getReverseSortedArrayIsArrayEmpty() {
+    Assert.assertEquals(0, Filler.getReverseSortedArray(0, 8).length);
   }
 
   private boolean isArraySorted(int [] array){

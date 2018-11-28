@@ -34,11 +34,6 @@ public class ClassScannerTest {
     Assert.assertTrue(classScanner.initSorters("some.ransom.pack.that.doesnt.exist").isEmpty());
   }
 
-  @Test
-  public void getAllSortersUsingReflections() throws AnalyzerException {
-    Assert.assertTrue(classScanner.initSorters("some.ransom.pack.that.doesnt.exist").isEmpty());
-  }
-
   @SuppressWarnings("deprecation")
   @Test
   public void getSorters() throws ClassNotFoundException {

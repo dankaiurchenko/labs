@@ -16,6 +16,9 @@ public class Filler {
    */
   @FillerMethod("Random array")
   static public int[] getRandomArray(int length, int max){
+    if(validate(length, max)){
+      return new int[]{};
+    }
     int[] array = new int[length];
     for (int i = 0; i < length; i++){
       array[i] = randomNum.nextInt(max);
@@ -32,6 +35,9 @@ public class Filler {
    */
   @FillerMethod("Sorted array")
   static public int[] getSortedArray(int length, int max) {
+    if(validate(length, max)){
+      return new int[]{};
+    }
     int[] array = new int[length];
     int step = max / length;
     for (int i = 0; i < length; i++) {
@@ -50,6 +56,9 @@ public class Filler {
    */
   @FillerMethod("Sorted array with random end")
   static public int[] getSortedArrayWithRandomEnd(int length, int max){
+    if(validate(length, max)){
+      return new int[]{};
+    }
     int[] array = new int[length];
     int[] sortedPart = Filler.getSortedArray(length-1, max);
     System.arraycopy(sortedPart, 0, array, 0, length - 1);
@@ -66,11 +75,18 @@ public class Filler {
    */
   @FillerMethod("Reverse sorted array")
   static public int[] getReverseSortedArray(int length, int max){
+    if(validate(length, max)){
+      return new int[]{};
+    }
     int[] array = new int[length];
     int step = max / length;
     for (int i = 0; i < length; i++) {
       array[i] = step * (length - i);
     }
     return array;
+  }
+
+  private static boolean validate(int length, int max){
+    return (length <= 1 || max <= 1);
   }
 }
