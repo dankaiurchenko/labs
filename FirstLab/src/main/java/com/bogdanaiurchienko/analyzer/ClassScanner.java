@@ -18,6 +18,8 @@ import java.util.*;
 @SuppressWarnings("WeakerAccess")
 public class ClassScanner {
 
+  private ArrayList<String> sorterNames = new ArrayList<>();
+
   /**
    * Scans the {@link com.bogdanaiurchienko.fillers.Filler} in search of public methods with particular annotation
    * Puts all found methods in {@code LinkedHashMap<String, Method> methods} where
@@ -33,6 +35,10 @@ public class ClassScanner {
         methods.put(methodName, method);
       }
     return methods.entrySet();
+  }
+
+  public ArrayList<String> getSorterNames() {
+    return sorterNames;
   }
 
   /**
@@ -53,6 +59,7 @@ public class ClassScanner {
         String sorterName = (sorterClass.getAnnotation(SorterAnnotation.class) != null) ?
                 sorterClass.getAnnotation(SorterAnnotation.class).value() : sorterClass.getSimpleName();
         sorters.put(sorterName, sorterClass.newInstance());
+        sorterNames.add(sorterName);
       } catch (InstantiationException | IllegalAccessException e) {
         throw new AnalyzerException(e);
       }

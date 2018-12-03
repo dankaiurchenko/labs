@@ -12,6 +12,7 @@ public class Filler {
    * Generates array of set size with every element generated randomly between 0 and max.
    * @param length length of array to generate
    * @param max maximum value of an element
+   * @throws FillerException in case of invalid array length or max value
    * @return generated array
    */
   @FillerMethod("Random array")
