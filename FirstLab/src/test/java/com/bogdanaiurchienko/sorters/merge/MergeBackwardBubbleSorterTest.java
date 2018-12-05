@@ -3,10 +3,13 @@ package com.bogdanaiurchienko.sorters.merge;
 import com.bogdanaiurchienko.fillers.Filler;
 import com.bogdanaiurchienko.fillers.FillerException;
 import com.bogdanaiurchienko.sorters.ArrayChecker;
+import com.bogdanaiurchienko.sorters.SorterException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 public class MergeBackwardBubbleSorterTest {
   private MergeBackwardBubbleSorter sorter;
@@ -20,18 +23,13 @@ public class MergeBackwardBubbleSorterTest {
     sorter = null;
   }
 
-  @Test(timeout = 1000, expected = IndexOutOfBoundsException.class)
-  public void sortPart() {
-    sorter.sortPart(new int[]{1, 2, 3}, 2, 7);
-  }
-
   @Test(timeout = 1000, expected = NullPointerException.class)
-  public void sort() {
+  public void sort() throws SorterException {
     sorter.sort(null);
   }
 
   @Test
-  public void sortArray() throws FillerException {
-    Assert.assertTrue(ArrayChecker.isArraySorted(sorter.sort(Filler.getRandomArray(50, 100))));
+  public void sortArray() throws FillerException, SorterException {
+    Assert.assertTrue(ArrayChecker.isArraySorted(sorter.sort(Filler.getRandomArray(12, 100))));
   }
 }

@@ -3,6 +3,7 @@ package com.bogdanaiurchienko.analyzer;
 import com.bogdanaiurchienko.output.Printer;
 import com.bogdanaiurchienko.output.PrinterException;
 import com.bogdanaiurchienko.sorters.AbstractSorter;
+import com.bogdanaiurchienko.sorters.SorterException;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -53,7 +54,7 @@ public class Analyzer {
    * @throws PrinterException in case of problems with output
    * @param pack String name of package, where sorter classes are to be found
    */
-  public void analyzeAllArrayTypes(String pack) throws AnalyzerException, PrinterException {
+  public void analyzeAllArrayTypes(String pack) throws AnalyzerException, PrinterException, SorterException {
     LinkedHashMap<String, AbstractSorter> sorters = classScanner.initSorters(pack);
     HashMap<String, HashMap<String, HashMap<String, Long>>> resultsForAllArrayTypes = new HashMap<>();
     for(Entry<String, Method> method: classScanner.getFillerMethodsWithAnnotation()){
@@ -73,7 +74,7 @@ public class Analyzer {
    * @return results of sort time measurement for every array size by {@link @param sorter}
    */
   private HashMap<String, HashMap<String, Long>> analyzeAllArrayLength(HashMap<String, AbstractSorter> sorters,
-                                                                       int[][] allArrays) {
+                                                                       int[][] allArrays) throws SorterException {
     HashMap<String, HashMap<String, Long>> allArrayLengthSortTimeMS = new HashMap<>();
     for (int j = 0; j < allArrays.length; j++) {
       allArrayLengthSortTimeMS.put(String.valueOf(arrayLength[j]),
@@ -93,7 +94,7 @@ public class Analyzer {
     * @param sorters array of sorters that are to be tested
     * @return results of sort time measurement for every array size for every sorter
     */
-  private HashMap<String, Long> analyzeAllSorters(int[] array, HashMap<String, AbstractSorter> sorters){
+  private HashMap<String, Long> analyzeAllSorters(int[] array, HashMap<String, AbstractSorter> sorters) throws SorterException {
     HashMap<String, Long> allSortersSortTimeMS = new HashMap<>();
     for (Entry<String, AbstractSorter> sorter : sorters.entrySet()) {
       allSortersSortTimeMS.put(sorter.getKey(), analyzeSort(sorter.getValue(), array));
@@ -109,7 +110,7 @@ public class Analyzer {
     * @param arrayToSort  array of one particular size from {@link com.bogdanaiurchienko.analyzer.Analyzer#arrayLength}
     * @return sort time in ms
     */
-  private long analyzeSort(AbstractSorter sorter, int[] arrayToSort) {
+  private long analyzeSort(AbstractSorter sorter, int[] arrayToSort) throws SorterException {
     long before = System.currentTimeMillis();
     sorter.sort(arrayToSort);
     long after = System.currentTimeMillis();

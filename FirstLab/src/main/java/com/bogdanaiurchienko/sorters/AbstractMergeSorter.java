@@ -1,54 +1,89 @@
 package com.bogdanaiurchienko.sorters;
 
+import java.util.Arrays;
+
 /**
  * Parent class to all merge sorters with method of half partition that can be analyzed by utility.
  * @author Bogdana Iurchienko
  */
-public abstract class AbstractMergeSorter extends AbstractSorter {
+public abstract class AbstractMergeSorter extends AbstractSorter implements Runnable{
+  protected int[] subArrayToSort;
+  protected Thread thread;
 
-  public int[] sort(int[] arrayToSort){
-    this.mergeSort(arrayToSort, arrayToSort.length - 1);
-    return arrayToSort;
+
+  protected AbstractMergeSorter() {
+  }
+
+  public AbstractMergeSorter(int[] subArrayToSort) {
+    this.subArrayToSort = subArrayToSort;
+  }
+
+  public int[] sort(int[] arrayToSort) throws SorterException {
+    return this.mergeSort(arrayToSort);
   }
 
   /**
-   * Divides <b>arrayToSort</b> into 2 halves, sorts each half with another sorter. <br>
-   *   Then merges two parts into one array.
-   * @see AbstractMergeSorter#sortPart(int[], int, int)
+   * Divides <b>arrayToSort</b> into n parts, sorts each in another thread. <br>
+   *   Then merges parts into one array.
    * @param arrayToSort array to sort
-   * @param high index of the last element to sort
    */
-  private void mergeSort(int[] arrayToSort, int high) {
-    int mid = (high) / 2;
-    sortPart(arrayToSort, 0, mid);
-    sortPart(arrayToSort, mid + 1, high);
-    int[] buf = new int[high + 1];//Arrays.copyOf(arrayToSort, arrayToSort.length);
-    System.arraycopy(arrayToSort, 0, buf, 0, high + 1);
-    int i = 0, j = mid + 1;
-    for (int k = 0; k <= high; k++) {
-      if (i > mid) {
-        arrayToSort[k] = buf[j];
+  private int[] mergeSort(int[] arrayToSort) throws SorterException {
+    int [][] arrayChunks = splitArray(arrayToSort, Runtime.getRuntime().availableProcessors());
+    Thread[] threads = new Thread[arrayChunks.length];
+      for(int i = 0; i < arrayChunks.length; i++){
+        threads[i] = this.getNewThread(arrayChunks[i]);
+      }
+      for(int i = 0; i < arrayChunks.length; i++){
+        try {
+          threads[i].join();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+      int[] sortedArray = new int[]{};
+      for (int[] arrayChunk : arrayChunks) {
+        sortedArray = mergeTwoArrays(sortedArray, arrayChunk);
+      }
+      return sortedArray;
+  }
+
+  private int[] mergeTwoArrays(int[] firstOne, int[] secondOne){
+    int newLength = firstOne.length + secondOne.length;
+    int[] mergedArray = new int[newLength];
+    int i = 0, j = 0;
+    for (int k = 0; k < newLength; k++) {
+      if (i > firstOne.length - 1) {
+        mergedArray[k] = secondOne[j];
         j++;
-      } else if (j > high) {
-        arrayToSort[k] = buf[i];
+      } else if (j > secondOne.length - 1) {
+        mergedArray[k] = firstOne[i];
         i++;
-      } else if (buf[j] < buf[i]) {
-        arrayToSort[k] = buf[j];
+      } else if (secondOne[j] < firstOne[i]) {
+        mergedArray[k] = secondOne[j];
         j++;
       } else {
-        arrayToSort[k] = buf[i];
+        mergedArray[k] = firstOne[i];
         i++;
       }
     }
-
+    return mergedArray;
   }
 
-  /**
-   * Sorts the part (elements with indexes from low to high) of the arrayToSort.
-   * @param arrayToSort array to sort
-   * @param low the beginning of the part to sort
-   * @param high the end of the part to sort
-   */
-  abstract protected void sortPart(int[] arrayToSort, int low, int high);
+  private int[][] splitArray(int[] arrayToSplit, int chunks) throws SorterException{
+    if(arrayToSplit.length < chunks){
+      throw new SorterException();
+    }
+    int chunkSize = (int)(arrayToSplit.length / chunks + 0.5);
+    int[][] arrays = new int[chunks][];
+    for(int i = 0; i < chunks; i++){
+      arrays[i] = Arrays.copyOfRange(arrayToSplit, i * chunkSize, i * chunkSize + chunkSize);
+    }
+    return arrays;
+  }
 
+  protected abstract Thread getNewThread(int[] subArrayToSort);
+
+  public Thread getThread() {
+    return thread;
+  }
 }

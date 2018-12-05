@@ -12,19 +12,25 @@ import java.util.Arrays;
  * @author Bogdana Iurchienko
  */
 @SorterAnnotation("Merge bubble backward sort")
-@SuppressWarnings("unused")
 public class MergeBackwardBubbleSorter extends AbstractMergeSorter {
 
-  /**
-   *
-   * @param arrayToSort array to sort
-   * @param low the beginning of the part to sort
-   * @param high the end of the part to sort
-   */
-  protected void sortPart(int[] arrayToSort, int low, int high){
-    BubbleBackwardSorter sorter = new BubbleBackwardSorter();
-    int[] buf = Arrays.copyOfRange(arrayToSort, low, high+1);
-    System.arraycopy(sorter.sort(buf), 0, arrayToSort, low, buf.length);
+  @SuppressWarnings("WeakerAccess")
+  public MergeBackwardBubbleSorter() {
   }
 
+  private MergeBackwardBubbleSorter(int[] subArrayToSort) {
+    super(subArrayToSort);
+    thread = new Thread(this);
+    thread.start();
+  }
+
+  @Override
+  public void run(){
+    new BubbleBackwardSorter().sort(this.subArrayToSort);
+  }
+
+  @Override
+  protected Thread getNewThread(int[] subArrayToSort) {
+    return new MergeBackwardBubbleSorter(subArrayToSort).getThread();
+  }
 }

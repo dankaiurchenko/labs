@@ -14,15 +14,23 @@ import java.util.Arrays;
 @SuppressWarnings("unused")
 public class MergeSystemSorter extends AbstractMergeSorter {
 
-  /**
-   *
-   * @param arrayToSort array to sort
-   * @param low the beginning of the part to sort
-   * @param high the end of the part to sort
-   */
-  protected void sortPart(int[] arrayToSort, int low, int high){
-    SystemSorter sorter = new SystemSorter();
-    int[] buf = Arrays.copyOfRange(arrayToSort, low, high+1);
-    System.arraycopy(sorter.sort(buf), 0, arrayToSort, low, buf.length);
+  @SuppressWarnings("WeakerAccess")
+  public MergeSystemSorter() {
+  }
+
+  private MergeSystemSorter(int[] subArrayToSort) {
+    super(subArrayToSort);
+    thread = new Thread(this);
+    thread.start();
+  }
+
+  @Override
+  public void run() {
+    new SystemSorter().sort(subArrayToSort);
+  }
+
+  @Override
+  protected Thread getNewThread(int[] subArrayToSort) {
+    return new MergeSystemSorter(subArrayToSort).getThread();
   }
 }

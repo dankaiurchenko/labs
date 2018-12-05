@@ -18,7 +18,7 @@ public abstract class AbstractSorter {
    * @param arrayToSort array of int to be sorted
    * @return sorted array
    */
-  public abstract int[] sort(int[] arrayToSort);
+  public abstract int[] sort(int[] arrayToSort) throws SorterException;
 
   /**
    * Swaps two elements in <b>array</b> with indexes <b>firstElement</b> and <b>secondElement</b>

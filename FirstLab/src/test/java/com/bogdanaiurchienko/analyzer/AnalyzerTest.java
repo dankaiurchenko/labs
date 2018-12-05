@@ -1,13 +1,14 @@
 package com.bogdanaiurchienko.analyzer;
 
 import com.bogdanaiurchienko.output.PrinterException;
+import com.bogdanaiurchienko.sorters.SorterException;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class AnalyzerTest {
 
   @Test(timeout = 10000)
-  public void analyzeAllArrayTypes() throws AnalyzerException, PrinterException {
+  public void analyzeAllArrayTypes() throws AnalyzerException, PrinterException, SorterException {
     new Analyzer(new int[] {10, 50}).analyzeAllArrayTypes("com.bogdanaiurchienko.sorters");
   }
 
@@ -17,12 +18,12 @@ public class AnalyzerTest {
   }
 
   @Test(timeout = 10000, expected = IllegalArgumentException.class)
-  public void analyzeAllArrayTypes3() throws AnalyzerException, PrinterException {
+  public void analyzeAllArrayTypes3() throws AnalyzerException, PrinterException, SorterException {
     new Analyzer(new int[] {10, 50}).analyzeAllArrayTypes("some.random.package");
   }
 
   @Test(timeout = 10000, expected = IllegalArgumentException.class)
-  public void analyzeAllArrayTypes4() throws AnalyzerException, PrinterException {
+  public void analyzeAllArrayTypes4() throws AnalyzerException, PrinterException, SorterException {
     new Analyzer(new int[] {}).analyzeAllArrayTypes("some.random.package");
   }
 }
