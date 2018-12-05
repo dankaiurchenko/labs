@@ -14,7 +14,7 @@ public class BubbleBackwardSorter extends AbstractBubbleSorter {
 
   @Override
   protected int getFirstInnerIndex(int i) {
-    return arrayToSort.length - i;
+    return arrayToSort.length - 1;
   }
 
   @Override

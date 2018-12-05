@@ -14,12 +14,17 @@ public abstract class AbstractBubbleSorter extends AbstractSorter {
    */
   public int [] sort(int [] arrayToSort){
     this.arrayToSort = arrayToSort;
+    boolean swappedAtLeastOnce;
     for (int i = getFirstOuterIndex(); isLastOuterIndex(i); i = getNextIndex(i)) {
+      swappedAtLeastOnce = false;
       for (int j = getFirstInnerIndex(i); isLastInnerIndex(i, j); j = getNextIndex(j)) {
         if (elementsNotInOrder(j)) {
+          swappedAtLeastOnce = true;
           swapElements(j);
         }
       }
+      if(!swappedAtLeastOnce)
+        return arrayToSort;
     }
     return arrayToSort;
   }
