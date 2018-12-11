@@ -30,6 +30,23 @@ public class MergeBackwardBubbleSorterTest {
 
   @Test
   public void sortArray() throws FillerException, SorterException {
-    Assert.assertTrue(ArrayChecker.isArraySorted(sorter.sort(Filler.getRandomArray(12, 100))));
+    int[] array = Filler.getRandomArray(50, 100);
+    int[] sortedArray = sorter.sort(array);
+    Assert.assertTrue(ArrayChecker.isArraySorted(sortedArray));
   }
+
+  @Test
+  public void arrayEvenLength() throws FillerException, SorterException {
+    int[] array = Filler.getRandomArray(50, 100);
+    int[] sortedArray = sorter.sort(array);
+    Assert.assertEquals(array.length, sortedArray.length);
+  }
+
+  @Test
+  public void arrayUnevenLength() throws FillerException, SorterException {
+    int[] array = Filler.getRandomArray(27, 100);
+    int[] sortedArray = sorter.sort(array);
+    Assert.assertEquals(array.length, sortedArray.length);
+  }
+
 }

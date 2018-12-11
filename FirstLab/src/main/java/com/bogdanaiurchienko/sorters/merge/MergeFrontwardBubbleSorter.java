@@ -4,7 +4,6 @@ import com.bogdanaiurchienko.sorters.BubbleFrontwardSorter;
 import com.bogdanaiurchienko.sorters.AbstractMergeSorter;
 import com.bogdanaiurchienko.sorters.SorterAnnotation;
 
-import java.util.Arrays;
 /**
  * Sorts the array using merge method of half partition and sorting the parts with BubbleFrontwardSorter
  * @see com.bogdanaiurchienko.sorters.BubbleFrontwardSorter

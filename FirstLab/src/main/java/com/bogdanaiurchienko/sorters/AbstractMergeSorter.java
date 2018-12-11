@@ -73,11 +73,14 @@ public abstract class AbstractMergeSorter extends AbstractSorter implements Runn
     if(arrayToSplit.length < chunks){
       throw new SorterException();
     }
-    int chunkSize = (int)(arrayToSplit.length / chunks + 0.5);
+    int chunkSize = (arrayToSplit.length / chunks + 1);
+    int lastChunkSize = chunkSize - (chunkSize * chunks - arrayToSplit.length);
     int[][] arrays = new int[chunks][];
-    for(int i = 0; i < chunks; i++){
+    for(int i = 0; i < chunks - 1; i++){
       arrays[i] = Arrays.copyOfRange(arrayToSplit, i * chunkSize, i * chunkSize + chunkSize);
     }
+    //last chunk whose length may differ
+    arrays[chunks - 1] = Arrays.copyOfRange(arrayToSplit, (chunks - 1) * chunkSize, (chunks - 1)* chunkSize + lastChunkSize);
     return arrays;
   }
 

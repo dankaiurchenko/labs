@@ -4,7 +4,6 @@ import com.bogdanaiurchienko.sorters.AbstractMergeSorter;
 import com.bogdanaiurchienko.sorters.SorterAnnotation;
 import com.bogdanaiurchienko.sorters.SystemSorter;
 
-import java.util.Arrays;
 /**
  * Sorts the array using merge method of half partition and sorting the parts with SystemSorter
  * @see com.bogdanaiurchienko.sorters.SystemSorter
