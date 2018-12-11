@@ -33,7 +33,10 @@ public class Analyzer {
    *
    * @param arrayLength int array that contains number of elements in each array to sort
    */
-  public Analyzer(int[] arrayLength) {
+  public Analyzer(int[] arrayLength) throws AnalyzerException {
+    if(arrayLength.length < 1) {
+      throw new AnalyzerException(" Invalid array lengths to analyze");
+    }
     this.arrayLength = arrayLength;
   }
 

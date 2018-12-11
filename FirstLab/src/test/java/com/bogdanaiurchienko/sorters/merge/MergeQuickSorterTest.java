@@ -21,13 +21,13 @@ public class MergeQuickSorterTest {
     sorter = null;
   }
 
-  @Test(timeout = 1000, expected = NullPointerException.class)
+  @Test(expected = NullPointerException.class)
   public void sort() throws SorterException {
     sorter.sort(null);
 
   }
 
-  @Test
+  @Test(timeout = 1000)
   public void sortArray() throws FillerException, SorterException {
     int[] array = Filler.getRandomArray(50, 100);
     int[] sortedArray = sorter.sort(array);
@@ -36,7 +36,7 @@ public class MergeQuickSorterTest {
 
   @Test
   public void arrayEvenLength() throws FillerException, SorterException {
-    int[] array = Filler.getRandomArray(50, 100);
+    int[] array = Filler.getRandomArray(40, 100);
     int[] sortedArray = sorter.sort(array);
     Assert.assertEquals(array.length, sortedArray.length);
   }

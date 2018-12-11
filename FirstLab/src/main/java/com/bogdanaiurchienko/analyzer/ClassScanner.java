@@ -27,12 +27,15 @@ public class ClassScanner {
    * @see FillerMethod
    * @return entrySet of methods and their names
    */
-  public Set<Map.Entry<String, Method>> getFillerMethodsWithAnnotation() {
+  public Set<Map.Entry<String, Method>> getFillerMethodsWithAnnotation() throws AnalyzerException {
     LinkedHashMap<String, Method> methods = new LinkedHashMap<>();
     for (Method method : Filler.class.getDeclaredMethods())
       if (method.isAnnotationPresent(FillerMethod.class)) {
         String methodName =  method.getAnnotation(FillerMethod.class).value();
         methods.put(methodName, method);
+      }
+      if(methods.isEmpty()){
+        throw new AnalyzerException("No filler methods found");
       }
     return methods.entrySet();
   }
@@ -63,6 +66,9 @@ public class ClassScanner {
       } catch (InstantiationException | IllegalAccessException e) {
         throw new AnalyzerException(e);
       }
+    }
+    if(sorters.isEmpty()){
+      throw new AnalyzerException("No sorters found");
     }
     return sorters;
   }

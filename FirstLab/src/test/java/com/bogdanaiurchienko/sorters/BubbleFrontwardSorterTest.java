@@ -21,12 +21,12 @@ public class BubbleFrontwardSorterTest {
   }
 
 
-  @Test(timeout = 10000, expected = NullPointerException.class)
+  @Test(expected = NullPointerException.class)
   public void sort() {
     sorter.sort(null);
   }
 
-  @Test
+  @Test(timeout = 1000)
   public void sortArray() throws FillerException {
     Assert.assertTrue(ArrayChecker.isArraySorted(sorter.sort(Filler.getRandomArray(50, 100))));
   }

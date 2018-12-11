@@ -20,17 +20,17 @@ public class QuickSorterTest {
     sorter = null;
   }
 
-  @Test(timeout = 1000, expected = NullPointerException.class)
+  @Test(expected = NullPointerException.class)
   public void sort() {
     sorter.sort(null);
   }
 
-  @Test(timeout = 1000, expected = IndexOutOfBoundsException.class)
+  @Test(expected = IndexOutOfBoundsException.class)
   public void sort2() {
     sorter.quickSort(new int[]{1, 2, 3}, 9, -1);
   }
 
-  @Test
+  @Test(timeout = 1000)
   public void sortArray() throws FillerException {
     Assert.assertTrue(ArrayChecker.isArraySorted(sorter.sort(Filler.getRandomArray(50, 100))));
   }
